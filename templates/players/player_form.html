@@ -1,0 +1,74 @@
+{% extends "menu.html" %}
+
+{% block title %}{% if player %}Modifier joueur{% else %}Ajouter un joueur{% endif %}{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="team-form-container">
+
+    <form method="POST" class="team-form" enctype="multipart/form-data">
+
+        <div class="form-header">
+            <h2>{% if player %}Modifier joueur{% else %}Ajouter un joueur{% endif %}</h2>
+        </div>
+
+        <!-- Prénom -->
+        <div class="form-group">
+            <label>Prénom :</label>
+            <input type="text" name="first_name" 
+                   value="{{ player.first_name if player else '' }}" required>
+        </div>
+
+        <!-- Nom -->
+        <div class="form-group">
+            <label>Nom :</label>
+            <input type="text" name="last_name"
+                   value="{{ player.last_name if player else '' }}" required>
+        </div>
+
+        <!-- Numéro -->
+        <div class="form-group">
+            <label>Numéro :</label>
+            <input type="number" name="number" 
+                   value="{{ player.number if player else '' }}">
+        </div>
+
+        <!-- Équipe -->
+        <div class="form-group">
+            <label>Équipe :</label>
+            <select name="team_id" required>
+                {% for team in teams %}
+                    <option value="{{ team.id }}" 
+                        {% if player and player.team_id == team.id %}selected{% endif %}>
+                        {{ team.name }} ({{ team.city }})
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Image -->
+        <div class="form-group">
+            <label>Photo du joueur :</label>
+            <input type="file" name="image" accept="image/*">
+        </div>
+
+        {% if player and player.image_filename %}
+        <div class="form-group">
+            <label>Image actuelle :</label><br>
+            <img src="{{ url_for('static', filename='uploads/players/' ~ player.image_filename) }}"
+                 alt="Photo joueur"
+                 style="width:120px; height:120px; object-fit:cover; border-radius:8px;">
+        </div>
+        {% endif %}
+
+        <button type="submit" class="btn-submit">
+            {% if player %}Enregistrer{% else %}Créer{% endif %}
+        </button>
+
+    </form>
+
+</div>
+{% endblock %}

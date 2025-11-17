@@ -1,0 +1,102 @@
+:root {
+    --primary: #2c3e50;
+    --secondary: #ecf0f1;
+    --accent: #3498db;
+    --border: #dcdcdc;
+}
+
+body {
+    font-family: "Inter", sans-serif;
+    margin: 0;
+    padding: 0;
+    background: var(--secondary);
+    display: flex;
+    min-height: 100vh;
+}
+
+/* SIDEBAR */
+nav {
+    width: 220px;
+    background: var(--primary);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    box-sizing: border-box;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+}
+
+nav .logo {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 30px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin-bottom: 10px;
+    font-weight: 600;
+    padding: 10px;
+    border-radius: 6px;
+    transition: 0.2s;
+    display: block;
+}
+
+nav a:hover {
+    background: var(--accent);
+    color: white;
+}
+
+/* Dropdown pour saisons */
+.dropdown {
+    display: flex;
+    flex-direction: column;
+}
+
+.dropdown-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-weight: 600;
+    text-align: left;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: 0.2s;
+    width: 100%;
+}
+
+.dropdown-btn:hover {
+    background: var(--accent);
+}
+
+.dropdown-content {
+    display: none;
+    flex-direction: column;
+    margin-left: 10px;
+}
+
+.dropdown-content a {
+    padding: 8px 10px;
+    font-weight: 500;
+}
+
+.dropdown.active .dropdown-content {
+    display: flex;
+}
+
+/* CONTENU PRINCIPAL */
+.main-content {
+    margin-left: 240px; /* largeur sidebar + marge */
+    padding: 25px;
+    flex: 1;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+}

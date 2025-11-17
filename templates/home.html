@@ -1,0 +1,15 @@
+{% extends "menu.html" %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block content %}
+<h1>Bienvenue sur Baseball Stats ⚾</h1>
+<p>Suivez les matchs, gérez les équipes et consultez les statistiques de la saison.</p>
+
+<div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 20px;">
+
+    <a href="{{ url_for('matchs.add_match') }}" style="padding: 20px; background: #3498db; color: white; border-radius: 8px; text-decoration: none; flex: 1; min-width: 200px; text-align: center;">Ajouter un match</a>
+    <a href="{{ url_for('matchs.matches') }}" style="padding: 20px; background: #2ecc71; color: white; border-radius: 8px; text-decoration: none; flex: 1; min-width: 200px; text-align: center;">Liste des matchs</a>
+    <a href="{{ url_for('teams.list_teams') }}" style="padding: 20px; background: #e67e22; color: white; border-radius: 8px; text-decoration: none; flex: 1; min-width: 200px; text-align: center;">Équipes</a>
+</div>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "menu.html" %}
+
+{% block title %}{% if season %}Modifier saison{% else %}Créer saison{% endif %}{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="team-form-container">
+
+    <form method="POST" class="team-form">
+        <div class="form-header">
+            <h2>{% if season %}Modifier la saison{% else %}Créer une saison{% endif %}</h2>
+        </div>
+
+        <!-- Nom -->
+        <div class="form-group">
+            <label>Nom :</label>
+            <input type="text" name="name" value="{{ season.name if season else '' }}" required>
+        </div>
+
+        <!-- Catégorie -->
+        <div class="form-group">
+            <label>Catégorie :</label>
+            <input type="text" name="category" value="{{ season.category if season else '' }}" required>
+        </div>
+
+        <!-- Année -->
+        <div class="form-group">
+            <label>Année :</label>
+            <input type="number" name="year" min="2000" max="2100" value="{{ season.year if season else '' }}" required>
+        </div>
+
+        <!-- Discipline -->
+        <div class="form-group">
+            <label>Discipline :</label>
+            <input type="text" name="discipline" value="{{ season.discipline if season else '' }}" required>
+        </div>
+
+        <!-- Équipes -->
+        <div class="form-group">
+            <label>Équipes associées :</label>
+            <select name="teams" multiple size="8">
+                {% for team in teams %}
+                    <option value="{{ team.id }}"
+                        {% if season and team in season.teams %}selected{% endif %}>
+                        {{ team.name }} ({{ team.city }})
+                    </option>
+                {% endfor %}
+            </select>
+            <small>Sélection multiple : Ctrl / Cmd</small>
+        </div>
+
+        <button type="submit" class="btn-submit">
+            {% if season %}Enregistrer{% else %}Créer{% endif %}
+        </button>
+
+    </form>
+
+</div>
+{% endblock %}

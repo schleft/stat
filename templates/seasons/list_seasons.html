@@ -1,0 +1,43 @@
+{% extends "menu.html" %}
+
+{% block title %}Liste des saisons{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="teams-header">
+    <h2>Liste des saisons</h2>
+    <a href="{{ url_for('seasons.create_season') }}" class="btn-create">➕ Créer une saison</a>
+</div>
+
+{% if seasons %}
+<div class="teams-grid">
+    {% for season in seasons %}
+    <div class="team-card">
+        <!-- Suppression -->
+        <form action="{{ url_for('seasons.delete_season', season_id=season.id) }}" method="post" class="delete-form"
+              onsubmit="return confirm('Voulez-vous vraiment supprimer cette saison ?');">
+            <button type="submit" class="btn-delete">&times;</button>
+        </form>
+
+        <!-- Modification / détails -->
+        <a href="{{ url_for('seasons.edit_season', season_id=season.id) }}" class="team-link">
+            <h3>{{ season.name }}</h3>
+            <p>Année : {{ season.year }}</p>
+            <p>Catégorie : {{ season.category }}</p>
+            <p>Discipline : {{ season.discipline }}</p>
+            {% if season.teams %}
+                <p>Équipes : {{ season.teams | map(attribute='name') | join(', ') }}</p>
+            {% else %}
+                <p>Aucune équipe associée</p>
+            {% endif %}
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p class="no-teams">Aucune saison créée pour le moment.</p>
+{% endif %}
+{% endblock %}

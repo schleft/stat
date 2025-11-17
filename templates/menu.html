@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Baseball Stats{% endblock %}</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const dropdownBtns = document.querySelectorAll(".dropdown-btn");
+            dropdownBtns.forEach(function(btn) {
+                btn.addEventListener("click", function() {
+                    this.parentElement.classList.toggle("active");
+                });
+            });
+        });
+    </script>
+    {% block head %}{% endblock %}
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <nav>
+        <div class="logo">⚙️ Administration</div>
+        <!-- Liste des équipes -->
+        <a href="{{ url_for('teams.list_teams') }}">Liste des équipes</a>
+        <!-- Liste des saisons -->
+        <a href="{{ url_for('seasons.list_seasons') }}">Liste des saisons</a>
+        <!-- Liste des joueurs -->
+        <a href="{{ url_for('players.list_players') }}">Liste des joueurs</a>
+        <!-- Liste des matchs -->
+        <a href="{{ url_for('matches.list_matches') }}">Liste des matchs</a>
+
+
+        <div class="logo">⚾ Baseball Stats</div>
+        <a href="{{ url_for('home') }}">Accueil</a>
+
+    </nav>
+
+    <!-- CONTENU PRINCIPAL -->
+    <div class="main-content">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+</body>
+</html>

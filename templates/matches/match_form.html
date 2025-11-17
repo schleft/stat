@@ -1,0 +1,218 @@
+{% extends "menu.html" %}
+
+{% block title %}{% if match %}Modifier match{% else %}Ajouter un match{% endif %}{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+<style>
+.team-form-container {
+    max-width: 700px;
+    margin: auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+.form-header h2 {
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+.form-group {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+.form-group label {
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #34495e;
+}
+.form-group input, .form-group select {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+.btn-submit {
+    background: #3498db;
+    color: #fff;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s;
+}
+.btn-submit:hover { background: #2980b9; }
+
+.flash-error {
+    background: #e74c3c;
+    color: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+.flash-success {
+    background: #2ecc71;
+    color: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+/* Autocomplete suggestions */
+.autocomplete-items {
+    position: absolute;
+    border: 1px solid #ccc;
+    border-top: none;
+    z-index: 99;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    max-height: 150px;
+    overflow-y: auto;
+    border-radius: 0 0 8px 8px;
+}
+.autocomplete-item {
+    padding: 10px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.autocomplete-item:hover { background-color: #f0f0f0; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="team-form-container">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" class="team-form">
+
+        <div class="form-header">
+            <h2>{% if match %}Modifier match{% else %}Ajouter un match{% endif %}</h2>
+        </div>
+
+        <!-- Saison -->
+        <div class="form-group">
+            <label>Saison :</label>
+            <select name="season_id" required>
+                {% for season in seasons %}
+                    <option value="{{ season.id }}" {% if match and match.season_id == season.id %}selected{% endif %}>
+                        {{ season.name }} - {{ season.year }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Équipes -->
+        <div class="form-group">
+            <label>Équipe à domicile :</label>
+            <select name="home_team_id" required>
+                {% for team in teams %}
+                    <option value="{{ team.id }}" {% if match and match.home_team_id == team.id %}selected{% endif %}>
+                        {{ team.name }} ({{ team.city }})
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Équipe visiteuse :</label>
+            <select name="away_team_id" required>
+                {% for team in teams %}
+                    <option value="{{ team.id }}" {% if match and match.away_team_id == team.id %}selected{% endif %}>
+                        {{ team.name }} ({{ team.city }})
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Date -->
+        <div class="form-group">
+            <label>Date :</label>
+            <input type="date" name="date" value="{{ match.date if match else '' }}" required>
+        </div>
+
+        <!-- Arbitres et scoreur -->
+        {% for role in ['arbitre1','arbitre2','scoreur'] %}
+        <div class="form-group autocomplete">
+            <label>{{ role|capitalize }} :</label>
+            <input type="text" name="{{ role }}_name" placeholder="Tapez pour rechercher un joueur"
+                   value="{{ getattr(match, role).first_name + ' ' + getattr(match, role).last_name if match and getattr(match, role) else '' }}"
+                   required="{{ role=='arbitre1' }}">
+            <input type="hidden" name="{{ role }}_id" value="{{ getattr(match, role).id if match and getattr(match, role) else '' }}">
+            <div class="autocomplete-items"></div>
+        </div>
+        {% endfor %}
+
+        <button type="submit" class="btn-submit">{% if match %}Enregistrer{% else %}Créer{% endif %}</button>
+    </form>
+</div>
+
+<script>
+// Liste des joueurs côté JS
+const players = [
+    {% for player in players %}
+    {id: {{ player.id }}, name: "{{ player.first_name }} {{ player.last_name }}"},
+    {% endfor %}
+];
+
+// Fonction autocompletion
+function autocomplete(input, hiddenInput, data) {
+    let currentFocus;
+
+    input.addEventListener("input", function() {
+        let val = this.value;
+        closeAllLists();
+        if (!val) return false;
+
+        currentFocus = -1;
+        let list = this.parentNode.querySelector(".autocomplete-items");
+
+        data.forEach(item => {
+            if (item.name.toLowerCase().includes(val.toLowerCase())) {
+                let div = document.createElement("div");
+                div.classList.add("autocomplete-item");
+                div.innerHTML = "<strong>" + item.name.substr(0, val.length) + "</strong>" + item.name.substr(val.length);
+                div.addEventListener("click", function() {
+                    input.value = item.name;
+                    hiddenInput.value = item.id;
+                    closeAllLists();
+                });
+                list.appendChild(div);
+            }
+        });
+    });
+
+    input.addEventListener("keydown", function(e) {
+        let x = this.parentNode.querySelector(".autocomplete-items");
+        if (!x) return;
+        x = x.getElementsByClassName("autocomplete-item");
+        if (e.keyCode == 40) { currentFocus++; addActive(x); }
+        else if (e.keyCode == 38) { currentFocus--; addActive(x); }
+        else if (e.keyCode == 13) { e.preventDefault(); if (currentFocus > -1) x[currentFocus].click(); }
+    });
+
+    function addActive(x) { removeActive(x); if (currentFocus >= x.length) currentFocus = 0; if (currentFocus < 0) currentFocus = x.length - 1; x[currentFocus].classList.add("autocomplete-active"); }
+    function removeActive(x) { for (let i=0;i<x.length;i++) x[i].classList.remove("autocomplete-active"); }
+    function closeAllLists(elmnt) { let x = document.getElementsByClassName("autocomplete-items"); for (let i=0;i<x.length;i++){ if(elmnt != x[i] && elmnt != input) x[i].innerHTML=""; } }
+    document.addEventListener("click", function (e) { closeAllLists(e.target); });
+}
+
+// Appliquer sur tous les champs
+document.querySelectorAll(".autocomplete").forEach(group => {
+    const input = group.querySelector("input[type=text]");
+    const hidden = group.querySelector("input[type=hidden]");
+    autocomplete(input, hidden, players);
+});
+</script>
+{% endblock %}

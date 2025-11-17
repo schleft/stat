@@ -1,0 +1,38 @@
+{% extends "menu.html" %}
+
+{% block title %}{% if team %}Modifier équipe{% else %}Créer équipe{% endif %}{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="team-form-container">
+    <form method="POST" enctype="multipart/form-data" class="team-form">
+        <div class="form-header">
+            <h2>{% if team %}Modifier équipe{% else %}Créer une équipe{% endif %}</h2>
+        </div>
+
+        <div class="form-group">
+            <label>Nom :</label>
+            <input type="text" name="name" value="{{ team.name if team else '' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label>Ville :</label>
+            <input type="text" name="city" value="{{ team.city if team else '' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label>Image :</label>
+            {% if team and team.image %}
+                <img src="{{ url_for('static', filename='uploads/' ~ team.image) }}" alt="Image équipe" class="team-preview">
+            {% endif %}
+            <input type="file" name="image">
+        </div>
+
+        <button type="submit" class="btn-submit">{% if team %}Enregistrer{% else %}Créer{% endif %}</button>
+    </form>
+</div>
+{% endblock %}
+

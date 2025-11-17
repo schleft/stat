@@ -1,0 +1,149 @@
+{% extends "menu.html" %}
+
+{% block title %}Roster - {{ match.home_team.name }} vs {{ match.away_team.name }}{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+<style>
+.team-form-container { max-width: 900px; margin: auto; padding: 20px; background: #fff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+.form-header h2 { margin-bottom: 20px; color: #2c3e50; }
+.form-group { margin-bottom: 15px; display: flex; flex-direction: column; position: relative; }
+.form-group label { margin-bottom: 5px; font-weight: 600; color: #34495e; }
+.form-group input, .form-group select { padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-size: 14px; }
+.btn-submit { background: #3498db; color: #fff; padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: background 0.3s; }
+.btn-submit:hover { background: #2980b9; }
+.autocomplete-items { position: absolute; border: 1px solid #ccc; border-top: none; z-index: 99; top: 100%; left: 0; right: 0; background: #fff; max-height: 150px; overflow-y: auto; border-radius: 0 0 8px 8px; }
+.autocomplete-item { padding: 10px; cursor: pointer; transition: background 0.2s; }
+.autocomplete-item:hover { background-color: #f0f0f0; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="team-form-container">
+    <div class="form-header">
+        <h2>Roster - {{ match.home_team.name }} vs {{ match.away_team.name }}</h2>
+    </div>
+
+    <form method="POST">
+
+        {% for team in teams %}
+        <h3>{{ team.name }} - Titulaires</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Ordre</th>
+                    <th>Joueur</th>
+                    <th>Poste</th>
+                    <th>Numéro</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in range(1,11) %}
+                {% set r = roster_dict.get(team.id, [])|selectattr('roster_order','equalto',i)|first %}
+                <tr class="autocomplete">
+                    <td>{{ i }}</td>
+                    <td>
+                        <input type="text" name="team_{{ team.id }}_order_{{ i }}_name"
+                               value="{{ r.player.first_name + ' ' + r.player.last_name if r else '' }}"
+                               placeholder="Tapez pour rechercher un joueur" required>
+                        <input type="hidden" name="team_{{ team.id }}_order_{{ i }}_id"
+                               value="{{ r.player.id if r else '' }}">
+                        <div class="autocomplete-items"></div>
+                    </td>
+                    <td><input type="text" name="team_{{ team.id }}_order_{{ i }}_position"
+                               value="{{ r.position if r else '' }}"></td>
+                    <td><input type="number" name="team_{{ team.id }}_order_{{ i }}_number"
+                               value="{{ r.number if r else '' }}"></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h3>{{ team.name }} - Remplaçants</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Joueur</th>
+                    <th>Poste</th>
+                    <th>Numéro</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in range(1,11) %}
+                {% set subs = roster_dict.get(team.id, [])|selectattr('roster_order','equalto',None)|list %}
+                {% set r = subs[i-1] if subs|length >= i else None %}
+                <tr class="autocomplete">
+                    <td>
+                        <input type="text" name="team_{{ team.id }}_sub_{{ i }}_name"
+                               value="{{ r.player.first_name + ' ' + r.player.last_name if r else '' }}"
+                               placeholder="Tapez pour rechercher un joueur">
+                        <input type="hidden" name="team_{{ team.id }}_sub_{{ i }}_id"
+                               value="{{ r.player.id if r else '' }}">
+                        <div class="autocomplete-items"></div>
+                    </td>
+                    <td><input type="text" name="team_{{ team.id }}_sub_{{ i }}_position"
+                               value="{{ r.position if r else '' }}"></td>
+                    <td><input type="number" name="team_{{ team.id }}_sub_{{ i }}_number"
+                               value="{{ r.number if r else '' }}"></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endfor %}
+
+        <button type="submit" class="btn-submit">Enregistrer Roster</button>
+    </form>
+</div>
+
+<script>
+const players = [
+    {% for player in players %}
+    {id: {{ player.id }}, name: "{{ player.first_name }} {{ player.last_name }}"},
+    {% endfor %}
+];
+
+function autocomplete(input, hiddenInput, data) {
+    let currentFocus;
+    input.addEventListener("input", function() {
+        let val = this.value;
+        closeAllLists();
+        if (!val) return false;
+        currentFocus = -1;
+        let list = this.parentNode.querySelector(".autocomplete-items");
+        data.forEach(item => {
+            if (item.name.toLowerCase().includes(val.toLowerCase())) {
+                let div = document.createElement("div");
+                div.classList.add("autocomplete-item");
+                div.innerHTML = "<strong>" + item.name.substr(0, val.length) + "</strong>" + item.name.substr(val.length);
+                div.addEventListener("click", function() {
+                    input.value = item.name;
+                    hiddenInput.value = item.id;
+                    closeAllLists();
+                });
+                list.appendChild(div);
+            }
+        });
+    });
+
+    input.addEventListener("keydown", function(e) {
+        let x = this.parentNode.querySelector(".autocomplete-items");
+        if (!x) return;
+        x = x.getElementsByClassName("autocomplete-item");
+        if (e.keyCode == 40) { currentFocus++; addActive(x); }
+        else if (e.keyCode == 38) { currentFocus--; addActive(x); }
+        else if (e.keyCode == 13) { e.preventDefault(); if (currentFocus > -1) x[currentFocus].click(); }
+    });
+
+    function addActive(x) { removeActive(x); if (currentFocus >= x.length) currentFocus = 0; if (currentFocus < 0) currentFocus = x.length - 1; x[currentFocus].classList.add("autocomplete-active"); }
+    function removeActive(x) { for (let i=0;i<x.length;i++) x[i].classList.remove("autocomplete-active"); }
+    function closeAllLists(elmnt) { let x = document.getElementsByClassName("autocomplete-items"); for (let i=0;i<x.length;i++){ if(elmnt != x[i] && elmnt != input) x[i].innerHTML=""; } }
+    document.addEventListener("click", function (e) { closeAllLists(e.target); });
+}
+
+document.querySelectorAll(".autocomplete").forEach(group => {
+    const input = group.querySelector("input[type=text]");
+    const hidden = group.querySelector("input[type=hidden]");
+    autocomplete(input, hidden, players);
+});
+</script>
+{% endblock %}

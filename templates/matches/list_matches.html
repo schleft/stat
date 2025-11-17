@@ -1,0 +1,41 @@
+{% extends "menu.html" %}
+
+{% block title %}Liste des matches{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="teams-header">
+    <h2>Liste des matches</h2>
+    <a href="{{ url_for('matches.create_match') }}" class="btn-create">➕ Ajouter un match</a>
+</div>
+
+{% if matches %}
+<div class="teams-grid">
+    {% for match in matches %}
+    <div class="team-card">
+
+        <!-- Supprimer -->
+        <form action="{{ url_for('matches.delete_match', match_id=match.id) }}" method="post" class="delete-form"
+              onsubmit="return confirm('Voulez-vous vraiment supprimer ce match ?');">
+            <button type="submit" class="btn-delete">&times;</button>
+        </form>
+
+        <!-- Lien vers modification -->
+        <a href="{{ url_for('matches.edit_match', match_id=match.id) }}" class="team-link">
+            <p><strong>{{ match.home_team.name }} vs {{ match.away_team.name }}</strong></p>
+            <p>Saison : {{ match.season.name }} - {{ match.season.year }}</p>
+            <p>Date : {{ match.date.strftime('%d/%m/%Y') }}</p>
+            <p>Arbitres : {{ match.arbitre1.first_name }} {{ match.arbitre1.last_name }} / {{ match.arbitre2.first_name }} {{ match.arbitre2.last_name }} </p>
+            <p>Scoreur : {{ match.scoreur.first_name }} {{ match.scoreur.last_name }}</p>
+        </a>
+
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p class="no-teams">Aucun match enregistré pour le moment.</p>
+{% endif %}
+{% endblock %}

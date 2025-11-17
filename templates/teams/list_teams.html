@@ -1,0 +1,41 @@
+{% extends "menu.html" %}
+
+{% block title %}Liste des équipes{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="teams-header">
+    <h2>Liste des équipes</h2>
+    <a href="{{ url_for('teams.create_team') }}" class="btn-create">➕ Créer une équipe</a>
+</div>
+
+{% if teams %}
+<div class="teams-grid">
+    {% for team in teams %}
+    <div class="team-card">
+        <!-- Suppression -->
+        <form action="{{ url_for('teams.delete_team', team_id=team.id) }}" method="post" class="delete-form"
+              onsubmit="return confirm('Voulez-vous vraiment supprimer cette équipe ?');">
+            <button type="submit" class="btn-delete">&times;</button>
+        </form>
+
+        <!-- Modification -->
+        <a href="{{ url_for('teams.edit_team', team_id=team.id) }}" class="team-link">
+            {% if team.image %}
+            <img src="{{ url_for('static', filename='uploads/' + team.image) }}" alt="{{ team.name }}">
+            {% else %}
+            <div class="no-image">Pas d'image</div>
+            {% endif %}
+            <h3>{{ team.name }}</h3>
+            <p>{{ team.city }}</p>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p class="no-teams">Aucune équipe créée pour le moment.</p>
+{% endif %}
+{% endblock %}
