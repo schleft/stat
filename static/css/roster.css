@@ -1,0 +1,235 @@
+.roster-container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 25px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.roster-title {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 26px;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+/* Grille 2 colonnes : titulaires / remplaçants */
+.roster-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+}
+
+/* Table */
+.roster-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.roster-table th {
+    background: #3498db;
+    color: white;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 6px 6px 0 0;
+}
+
+.roster-table td {
+    padding: 6px;
+    border-bottom: 1px solid #eee;
+}
+
+.roster-label {
+    font-weight: 600;
+    margin-bottom: 7px;
+    font-size: 18px;
+    color: #2c3e50;
+}
+
+input[type="text"], input[type="number"] {
+    width: 100%;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 13px;
+}
+
+/* Position = 2 caractères max */
+.pos-field {
+    width: 50px !important;
+    text-align: center;
+}
+
+.num-field {
+    width: 60px !important;
+    text-align: center;
+}
+
+/* Autocomplete */
+.autocomplete-items {
+    position: absolute;
+    border: 1px solid #ccc;
+    border-top: none;
+    z-index: 99;
+    background: #fff;
+    max-height: 150px;
+    overflow-y: auto;
+    border-radius: 0 0 8px 8px;
+}
+
+.autocomplete-item {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.autocomplete-item:hover {
+    background: #f0f0f0;
+}
+
+.save-btn {
+    margin-top: 25px;
+    display: block;
+    width: 100%;
+    background: #27ae60;
+    border: none;
+    padding: 14px;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.save-btn:hover {
+    background: #1e8a4b;
+}
+
+/* Champs texte et number */
+input[type="text"], input[type="number"], .pos-field {
+    width: 100%;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 13px;
+    box-sizing: border-box;
+    text-align: center; /* centre le texte, utile pour Pos */
+}
+
+/* Position = 2 caractères max */
+.pos-field {
+    max-width: 60px;
+}
+
+/* Numéro */
+.num-field {
+    width: 60px !important;
+    text-align: center;
+}
+
+/* Container général */
+.roster-container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 25px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.roster-title {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 26px;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+/* Table */
+.roster-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 1px 5px; /* espace horizontal et vertical entre cellules */
+}
+
+.roster-table th {
+    background: #3498db;
+    color: white;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 6px 6px 0 0;
+    text-align: center; /* centrer texte */
+}
+
+.roster-table td {
+    padding: 6px;
+    border-bottom: 1px solid #eee;
+    text-align: center; /* centre le contenu de toutes les cellules */
+}
+
+.roster-label {
+    font-weight: 600;
+    margin-bottom: 7px;
+    font-size: 18px;
+    color: #2c3e50;
+}
+
+input[type="text"], input[type="number"], .pos-field {
+    width: 100%;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 13px;
+    box-sizing: border-box;
+    text-align: center; /* centre le texte */
+}
+
+/* Position = 2 caractères max */
+.pos-field {
+    max-width: 60px;
+}
+
+/* Numéro */
+.num-field {
+    max-width: 60px;
+}
+
+/* Autocomplete */
+.autocomplete-items {
+    position: absolute;
+    border: 1px solid #ccc;
+    border-top: none;
+    z-index: 99;
+    background: #fff;
+    max-height: 150px;
+    overflow-y: auto;
+    border-radius: 0 0 8px 8px;
+}
+
+.autocomplete-item {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.autocomplete-item:hover {
+    background: #f0f0f0;
+}
+
+.save-btn {
+    margin-top: 25px;
+    display: block;
+    width: 100%;
+    background: #27ae60;
+    border: none;
+    padding: 14px;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.save-btn:hover {
+    background: #1e8a4b;
+}

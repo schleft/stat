@@ -70,8 +70,7 @@ def create_match():
 
         db.session.add(match)
         db.session.commit()
-        return redirect(url_for('rosters.edit_roster'))
-        return redirect(url_for('rosters.edit_roster', match_id=match.match_id))
+        return redirect(url_for('rosters.edit_roster', match_id=match.id))
 
     return render_template('matches/match_form.html', match=None, seasons=seasons, teams=teams, players=players)
 

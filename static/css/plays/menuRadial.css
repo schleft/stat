@@ -1,0 +1,70 @@
+.radial-menu {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: #f0f0f0;
+    transform: translate(-50%, -50%);
+    display: none;
+    z-index: 1000;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.radial-menu.active {
+    display: block;
+}
+
+/* Items */
+.menu-item {
+    position: absolute;
+    width: 70px;
+    height: 70px;
+    line-height: 70px;
+    border-radius: 50%;
+    background: #4a90e2;
+    color: #fff;
+    text-align: center;
+    font-weight: 600;
+    font-size: 13px;
+    transform-origin: center center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    top: 39%;
+    left:38%;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.menu-item:hover {
+    background: #357ab8;
+    transform: scale(1.15);
+}
+
+/* Rayon du cercle pour desktop */
+:root {
+    --menu-radius: 100px;
+}
+
+/* Bouton close centré */
+.close-menu-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: #e74c3c;
+    color: white;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    transition: background 0.2s ease;
+}
+
+.close-menu-btn:hover {
+    background: #c0392b;
+}

@@ -7,7 +7,7 @@ class Roster(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     match_id = db.Column(db.Integer, db.ForeignKey('match.id'), nullable=False)
     team_id = db.Column(db.Integer, db.ForeignKey('team.id'), nullable=False)
-    player_id = db.Column(db.Integer, db.ForeignKey('player.id'), nullable=False)
+    player_id = db.Column(db.Integer, db.ForeignKey('player.id'), nullable=True)
     
     position = db.Column(db.String(50), nullable=True)
     roster_order = db.Column(db.Integer, nullable=True)  # NULL si remplaçant

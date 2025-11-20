@@ -41,8 +41,8 @@ def edit_team(team_id):
         image_file = request.files.get('image')
         if image_file and image_file.filename != "":
             filename = secure_filename(image_file.filename)
-            os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-            image_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            os.makedirs(current_app.config['UPLOAD_FOLDER'], exist_ok=True)
+            image_file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
             team.image = filename
 
         db.session.commit()

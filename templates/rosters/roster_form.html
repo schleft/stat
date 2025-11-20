@@ -4,146 +4,136 @@
 
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
-<style>
-.team-form-container { max-width: 900px; margin: auto; padding: 20px; background: #fff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
-.form-header h2 { margin-bottom: 20px; color: #2c3e50; }
-.form-group { margin-bottom: 15px; display: flex; flex-direction: column; position: relative; }
-.form-group label { margin-bottom: 5px; font-weight: 600; color: #34495e; }
-.form-group input, .form-group select { padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-size: 14px; }
-.btn-submit { background: #3498db; color: #fff; padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: background 0.3s; }
-.btn-submit:hover { background: #2980b9; }
-.autocomplete-items { position: absolute; border: 1px solid #ccc; border-top: none; z-index: 99; top: 100%; left: 0; right: 0; background: #fff; max-height: 150px; overflow-y: auto; border-radius: 0 0 8px 8px; }
-.autocomplete-item { padding: 10px; cursor: pointer; transition: background 0.2s; }
-.autocomplete-item:hover { background-color: #f0f0f0; }
-</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/roster.css') }}">
 {% endblock %}
 
 {% block content %}
-<div class="team-form-container">
-    <div class="form-header">
-        <h2>Roster - {{ match.home_team.name }} vs {{ match.away_team.name }}</h2>
-    </div>
+<div class="roster-container">
+    <h2 class="roster-title">Roster - {{ match.home_team.name }} vs {{ match.away_team.name }}</h2>
 
     <form method="POST">
+        {% for team, team_name in [(match.home_team, "home"), (match.away_team, "away")] %}
+            <div class="team-block">
+                <div class="roster-label">{{ team.name }}</div>
 
-        {% for team in teams %}
-        <h3>{{ team.name }} - Titulaires</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Ordre</th>
-                    <th>Joueur</th>
-                    <th>Poste</th>
-                    <th>Numéro</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for i in range(1,11) %}
-                {% set r = roster_dict.get(team.id, [])|selectattr('roster_order','equalto',i)|first %}
-                <tr class="autocomplete">
-                    <td>{{ i }}</td>
-                    <td>
-                        <input type="text" name="team_{{ team.id }}_order_{{ i }}_name"
-                               value="{{ r.player.first_name + ' ' + r.player.last_name if r else '' }}"
-                               placeholder="Tapez pour rechercher un joueur" required>
-                        <input type="hidden" name="team_{{ team.id }}_order_{{ i }}_id"
-                               value="{{ r.player.id if r else '' }}">
-                        <div class="autocomplete-items"></div>
-                    </td>
-                    <td><input type="text" name="team_{{ team.id }}_order_{{ i }}_position"
-                               value="{{ r.position if r else '' }}"></td>
-                    <td><input type="number" name="team_{{ team.id }}_order_{{ i }}_number"
-                               value="{{ r.number if r else '' }}"></td>
-                </tr>
+                    <table class="roster-table">
+                        <tr>
+                            <th>Ordre</th>
+                            <th>Titulaire</th>
+                            <th>Pos</th>
+                            <th>#</th>
+                            <th>Remplaçant</th>
+                            <th>Pos</th>
+                            <th>#</th>
+                        </tr>
+
+                        {# Récupération du roster mappé (préparé dans le contrôleur Python) #}
+                            {% set team_roster = roster_mapped.get(team.id) %}
+                            {% set starters = team_roster.starters if team_roster else {} %}
+                            {% set bench_list = team_roster.bench if team_roster else [] %}
+                
+                            {% for i in range(1, 11) %}
+                                
+                                {# Accès direct au Titulaire par l'ordre i #}
+                                {% set starter = starters.get(i) %}
+                
+                                {# Assigner le i-ème Remplaçant de la liste #}
+                                {% set bench = bench_list[i-1] if (i-1) < bench_list|length else None %}
+
+                                <tr class="autocomplete-row" data-team="{{ team_name }}">
+                                        <td>{{ i }}</td>
+
+                                        {# Titulaire #}
+                                        <td style="position:relative;">
+                                                <input type="text"
+                                                               name="starter_{{ team.id }}_{{ i }}_name"
+                                                               placeholder="Titulaire"
+                                                               value="{{ starter.player.first_name ~ ' ' ~ starter.player.last_name if starter }}">
+                                                <input type="hidden"
+                                                               name="starter_{{ team.id }}_{{ i }}_id"
+                                                               value="{{ starter.player_id if starter }}">
+                                                <div class="autocomplete-items"></div>
+                                        </td>
+                                        <td><input class="pos-field" maxlength="2"
+                                                               name="starter_{{ team.id }}_{{ i }}_pos"
+                                                               value="{{ starter.position if starter }}"></td>
+                                        <td><input class="num-field" type="number"
+                                                               name="starter_{{ team.id }}_{{ i }}_num"
+                                                               value="{{ starter.number if starter }}"></td>
+
+                                        {# Remplaçant #}
+                                        <td style="position:relative;">
+                                                <input type="text"
+                                                               name="bench_{{ team.id }}_{{ i }}_name"
+                                                               placeholder="Remplaçant"
+                                                               value="{{ bench.player.first_name ~ ' ' ~ bench.player.last_name if bench }}">
+                                                <input type="hidden"
+                                                               name="bench_{{ team.id }}_{{ i }}_id"
+                                                               value="{{ bench.player_id if bench }}">
+                                                <div class="autocomplete-items"></div>
+                                        </td>
+                                        <td><input class="pos-field" maxlength="2"
+                                                               name="bench_{{ team.id }}_{{ i }}_pos"
+                                                               value="{{ bench.position if bench }}"></td>
+                                        <td><input class="num-field" type="number"
+                                                               name="bench_{{ team.id }}_{{ i }}_num"
+                                                               value="{{ bench.number if bench }}"></td>
+                                </tr>
+                                {% endfor %}
+                        </table>
+                </div>
+                <br><br>
                 {% endfor %}
-            </tbody>
-        </table>
 
-        <h3>{{ team.name }} - Remplaçants</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Joueur</th>
-                    <th>Poste</th>
-                    <th>Numéro</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for i in range(1,11) %}
-                {% set subs = roster_dict.get(team.id, [])|selectattr('roster_order','equalto',None)|list %}
-                {% set r = subs[i-1] if subs|length >= i else None %}
-                <tr class="autocomplete">
-                    <td>
-                        <input type="text" name="team_{{ team.id }}_sub_{{ i }}_name"
-                               value="{{ r.player.first_name + ' ' + r.player.last_name if r else '' }}"
-                               placeholder="Tapez pour rechercher un joueur">
-                        <input type="hidden" name="team_{{ team.id }}_sub_{{ i }}_id"
-                               value="{{ r.player.id if r else '' }}">
-                        <div class="autocomplete-items"></div>
-                    </td>
-                    <td><input type="text" name="team_{{ team.id }}_sub_{{ i }}_position"
-                               value="{{ r.position if r else '' }}"></td>
-                    <td><input type="number" name="team_{{ team.id }}_sub_{{ i }}_number"
-                               value="{{ r.number if r else '' }}"></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        {% endfor %}
-
-        <button type="submit" class="btn-submit">Enregistrer Roster</button>
-    </form>
+                <button class="save-btn">Enregistrer le roster</button>
+        </form>
 </div>
 
 <script>
-const players = [
-    {% for player in players %}
-    {id: {{ player.id }}, name: "{{ player.first_name }} {{ player.last_name }}"},
-    {% endfor %}
+const players_home = [
+        {% for p in players_by_team.get(match.home_team.id, []) %}
+        {id: {{ p.id }}, name: "{{ p.first_name }} {{ p.last_name }}"},
+        {% endfor %}
 ];
 
-function autocomplete(input, hiddenInput, data) {
-    let currentFocus;
-    input.addEventListener("input", function() {
-        let val = this.value;
-        closeAllLists();
-        if (!val) return false;
-        currentFocus = -1;
-        let list = this.parentNode.querySelector(".autocomplete-items");
-        data.forEach(item => {
-            if (item.name.toLowerCase().includes(val.toLowerCase())) {
-                let div = document.createElement("div");
-                div.classList.add("autocomplete-item");
-                div.innerHTML = "<strong>" + item.name.substr(0, val.length) + "</strong>" + item.name.substr(val.length);
-                div.addEventListener("click", function() {
-                    input.value = item.name;
-                    hiddenInput.value = item.id;
-                    closeAllLists();
+const players_away = [
+        {% for p in players_by_team.get(match.away_team.id, []) %}
+        {id: {{ p.id }}, name: "{{ p.first_name }} {{ p.last_name }}"},
+        {% endfor %}
+];
+
+function autocomplete(input, hidden, list) {
+        input.addEventListener("input", function () {
+                const box = this.parentNode.querySelector(".autocomplete-items");
+                box.innerHTML = "";
+                if (!this.value) return;
+
+                list.forEach(item => {
+                        if (item.name.toLowerCase().includes(this.value.toLowerCase())) {
+                                const div = document.createElement("div");
+                                div.classList.add("autocomplete-item");
+                                div.textContent = item.name;
+                                div.onclick = () => {
+                                        input.value = item.name;
+                                        hidden.value = item.id;
+                                        box.innerHTML = "";
+                                };
+                                box.appendChild(div);
+                        }
                 });
-                list.appendChild(div);
-            }
         });
-    });
-
-    input.addEventListener("keydown", function(e) {
-        let x = this.parentNode.querySelector(".autocomplete-items");
-        if (!x) return;
-        x = x.getElementsByClassName("autocomplete-item");
-        if (e.keyCode == 40) { currentFocus++; addActive(x); }
-        else if (e.keyCode == 38) { currentFocus--; addActive(x); }
-        else if (e.keyCode == 13) { e.preventDefault(); if (currentFocus > -1) x[currentFocus].click(); }
-    });
-
-    function addActive(x) { removeActive(x); if (currentFocus >= x.length) currentFocus = 0; if (currentFocus < 0) currentFocus = x.length - 1; x[currentFocus].classList.add("autocomplete-active"); }
-    function removeActive(x) { for (let i=0;i<x.length;i++) x[i].classList.remove("autocomplete-active"); }
-    function closeAllLists(elmnt) { let x = document.getElementsByClassName("autocomplete-items"); for (let i=0;i<x.length;i++){ if(elmnt != x[i] && elmnt != input) x[i].innerHTML=""; } }
-    document.addEventListener("click", function (e) { closeAllLists(e.target); });
 }
 
-document.querySelectorAll(".autocomplete").forEach(group => {
-    const input = group.querySelector("input[type=text]");
-    const hidden = group.querySelector("input[type=hidden]");
-    autocomplete(input, hidden, players);
+document.querySelectorAll(".autocomplete-row").forEach(row => {
+        const team = row.dataset.team;
+        const list = team === "home" ? players_home : players_away;
+
+        const inputs = row.querySelectorAll("input[type=text]");
+        const hiddens = row.querySelectorAll("input[type=hidden]");
+
+        autocomplete(inputs[0], hiddens[0], list);   // titulaire
+        autocomplete(inputs[1], hiddens[1], list);   // remplaçant
 });
 </script>
+
 {% endblock %}
