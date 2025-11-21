@@ -28,7 +28,7 @@ def list_players():
 
     players = players_query.all()
     teams = Team.query.all()  # on envoie aussi la liste des équipes pour le filtre
-    return render_template('players/list_players.html', players=players, teams=teams)
+    return render_template('admin/players/list_players.html', players=players, teams=teams)
 
 # Créer un joueur
 @players_bp.route('/players/create', methods=['GET', 'POST'])
@@ -56,7 +56,7 @@ def create_player():
         db.session.commit()
         return redirect(url_for('players.list_players'))
 
-    return render_template('player_form.html', teams=teams)
+    return render_template('admin/players/player_form.html', teams=teams)
 
 # Modifier un joueur
 @players_bp.route('/players/edit/<int:player_id>', methods=['GET', 'POST'])
@@ -76,7 +76,7 @@ def edit_player(player_id):
         db.session.commit()
         return redirect(url_for('players.list_players'))
 
-    return render_template('player_form.html', player=player, teams=teams)
+    return render_template('admin/player_form.html', player=player, teams=teams)
 
 # Supprimer un joueur
 @players_bp.route('/players/delete/<int:player_id>', methods=['POST'])

@@ -1,0 +1,65 @@
+<link rel="stylesheet" href="{{ url_for('static', filename='css/gameInfoDisplay.css') }}">
+
+<div class="game-control-panel">
+    <div style="display: flex; justify-content: space-around; align-items: flex-start; margin-bottom: 20px;">
+        <div class="control-info-group">
+            <div class="control-group">
+                <h4>Manche Actuelle</h4>
+                <div class="flex">
+                    <span id="currentInningDisplay" class="bold vertical-center"></span>
+                    <button id="nextInningBtn">▶️ Fin de Manche</button>
+                </div>
+            </div>
+            <div class="control-group teamPositionDisplay">
+                <div class="control-group" style="margin-top: 15px;">
+                    <h4>Équipe au Bâton</h4>
+                    <span id="currentBattingTeam"></span>
+                </div>
+                <div class="control-group" style="margin-top: 15px;">
+                    <h4>Équipe en Défense</h4>
+                    <span id="currentDefendingTeam"></span> 
+                </div>
+            </div>
+            <div class="control-group" style="margin-top: 15px;">
+                <h4>Outs</h4>
+
+                <div class="out1 circle circle-empty"></div>
+                <div class="out1 circle circle-red"></div>
+                <div class="out2 circle circle-empty"></div>
+                <div class="out2 circle circle-red"></div>
+                <div class="out3 circle circle-empty"></div>
+                <div class="out3 circle circle-red"></div>
+            </div>
+            <div class="control-group scoreboard" style="margin-top: 15px;">
+                <table class="inning-score-table">
+                <thead>
+                    <tr>
+                        <th>Équipe</th>
+                        <th>1</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr id="awayTeamScore">
+                        <td class="team-name"><span id="awayTeamName" data-teamId="{{ away_team.id }}">{{ away_team.name }}</td>
+                        <td class="inning" data-inning="1" data-team="away">0</td>
+                        <td class="total-score" id="awayTotal"></td>
+                    </tr>
+
+                    <tr id="homeTeamScore">
+                        <td class="team-name"><span id="homeTeamName" data-teamId="{{ home_team.id }}">{{ home_team.name }}</td>
+                        <td class="inning" data-inning="1" data-team="home">0</td>
+                        <td class="total-score" id="homeTotal"></td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+        </div>
+        <!-- Schema terrain de baseball -->
+        {% block baseballField %}
+            {% include "layout/baseballField.html" %}
+        {% endblock %}
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/layout/gameInfoDisplay.js') }}"></script>

@@ -174,3 +174,5 @@ radialMenu.addEventListener('click', function(event) {
         return;
     }
 });
+
+closeMenuBtn.addEventListener('click', closeRadialMenu);

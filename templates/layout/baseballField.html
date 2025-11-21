@@ -1,0 +1,34 @@
+<div class="field-diagram-container" id="fieldDiagramContainer">
+    <div class="diamond-area"></div>
+    
+    <div id="pitcher-mound"></div>
+
+    <div class="foul-line" id="foul-line-left"></div>
+    <div class="foul-line" id="foul-line-right"></div>
+    
+    <div class="defensive-player" id="player-P"></div>
+    <div class="defensive-player" id="player-C"></div>
+    <div class="defensive-player" id="player-1B"></div>
+    <div class="defensive-player" id="player-2B"></div>
+    <div class="defensive-player" id="player-3B"></div>
+    <div class="defensive-player" id="player-SS"></div>
+    <div class="defensive-player" id="player-LF"></div>
+    <div class="defensive-player" id="player-CF"></div>
+    <div class="defensive-player" id="player-RF"></div>
+
+    <div class="diamond">
+        <div class="base" id="base-3-visuel">
+            <span class="runner-name" id="runner-3B"></span>
+        </div>
+        <div class="base" id="base-2-visuel">
+            <span class="runner-name" id="runner-2B"></span>
+        </div>
+        <div class="base" id="base-1-visuel">
+            <span class="runner-name" id="runner-1B"></span>
+        </div>
+        <div id="home-plate"></div>
+    </div>
+</div>
+
+
+<script src="{{ url_for('static', filename='js/layout/baseballField.js') }}"></script>

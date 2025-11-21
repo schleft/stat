@@ -4,7 +4,7 @@ const currentDefendingTeam = document.getElementById('currentDefendingTeam');
 /**
  * Met à jour l'affichage de l'état du jeu (Manche, Outs, Équipe au bâton, et le terrain).
  */
-function updateGameDisplay() {
+function updateGameDisplay(runScored = 0) {
     const inningText = `Inning ${currentInning} ${isTopInning ? 'Top' : 'Bottom'}`;
     
     const battingRoster = isTopInning ? awayRoster : homeRoster;
@@ -42,7 +42,31 @@ function updateGameDisplay() {
         document.querySelector('.out3.circle-red').style.display = 'inline-block';
         document.querySelector('.out3.circle-empty').style.display = 'none';
     }
-    
+
+    //On met a jour le score
+    if(runScored > 0) {
+        updateScore(`${currentInning}`, `${isTopInning}`, runScored);
+    }
+
+    if(`${isTopInning}` === false) {
+        currentBattingTeamRoster = awayRoster; 
+    } else {
+        currentBattingTeamRoster = homeRoster;         
+    }
     populateBatterSelect(matchPlays);
     updateFieldDiagram(); 
+}
+
+function updateScore(inning, topInning, runScored) {
+    //Mise à jour du tableau de score    
+    if (topInning == false) {
+        scoreInning = document.getElementById('homeTeamScore').querySelector('td[data-inning="'+inning+'"]'); 
+        scoreTotal = document.getElementById('homeTotal');
+    } else {
+        scoreInning = document.getElementById('awayTeamScore').querySelector('td[data-inning="'+inning+'"]'); 
+        scoreTotal = document.getElementById('awayTotal');
+    }
+
+    scoreInning.textContent = (parseInt(scoreInning.textContent) || 0) + runScored;
+    scoreTotal.textContent = (parseInt(scoreTotal.textContent) || 0) + runScored;
 }

@@ -1,0 +1,58 @@
+<div class="action-input-section">
+    <h3>Nouvelle Action au Bâton</h3>
+    <label for="batterSelect">Batteur Actuel :</label>
+    <select id="batterSelect">
+        </select>
+    
+    <button id="selectActionBtn" style="padding: 10px 15px; background-color: green; color: white; border: none; cursor: pointer;">
+        Sélectionner l'Action
+    </button>
+</div>
+
+<!-- Menu radial -->
+<div class="radial-menu" id="radialMenu">
+    <button class="close-menu-btn" id="closeMenuBtn">X</button>
+</div>
+
+<!-- Fenêtre d'ajout d'une action -->
+<div id="actionDetailModal" class="modal">
+    <div class="modal-content">
+        <h3>Détails de l'Action: <strong id="modalActionCode"></strong></h3>
+        
+        <p>Batteur: <strong id="modalBatterName"></strong></p>
+        <hr>
+
+        <h4>État Initial des Bases</h4>
+        <div class="base-state-selector" id="baseStateSelector">
+            </div>
+        <hr>
+
+        <h4>Mouvements des Coureurs et Outs</h4>
+        <div id="runnerActionsContainer">
+            </div>
+        <hr>
+
+        <label for="defensiveCodeModal">Code Défensif / Erreur / Zone de frappe (Ex: 6-4-3, E6) :</label>
+        <input type="text" id="defensiveCodeModal" placeholder="Code défensif ou Erreur (Obligatoire)" style="width: 100%; padding: 8px; margin-bottom: 10px;">
+        
+        <label for="outsGenerated">Outs générés par l'action :</label>
+        <select id="outsGenerated" style="padding: 5px; margin-bottom: 20px;">
+            <option value="0">0 Out</option>
+            <option value="1">1 Out</option>
+            <option value="2">2 Outs</option>
+            <option value="3">3 Outs</option>
+        </select>
+        
+        <button id="submitActionDetailBtn" style="background-color: green; color: white; padding: 10px 15px; border: none; cursor: pointer;">
+            Enregistrer l'Action
+        </button>
+        <button id="cancelActionDetailBtn" style="background-color: #ccc; color: black; padding: 10px 15px; border: none; cursor: pointer; margin-left: 10px;">
+            Annuler
+        </button>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/menuRadial.js') }}"></script>
+<script src="{{ url_for('static', filename='js/modaleAction.js') }}"></script>
+<script src="{{ url_for('static', filename='js/newPlay.js') }}"></script>
+<script src="{{ url_for('static', filename='js/batterSelect.js') }}"></script>

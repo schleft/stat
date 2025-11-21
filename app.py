@@ -29,7 +29,7 @@ from routes.players import players_bp
 from routes.seasons import seasons_bp
 from routes.matchs import matches_bp
 from routes.rosters import rosters_bp
-from routes.scoreCards import scoreCards_bp
+from routes.playByPlay import playByPlays_bp
 
 # --- Enregistrement des Blueprints ---
 app.register_blueprint(players_bp)
@@ -37,7 +37,7 @@ app.register_blueprint(teams_bp)
 app.register_blueprint(seasons_bp)
 app.register_blueprint(matches_bp)
 app.register_blueprint(rosters_bp)
-app.register_blueprint(scoreCards_bp)
+app.register_blueprint(playByPlays_bp)
 
 # --- Route accueil ---
 @app.route('/')

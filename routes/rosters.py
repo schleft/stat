@@ -43,7 +43,7 @@ def edit_roster(match_id):
 
 
     return render_template(
-        'rosters/roster_form.html',
+        'admin/rosters/roster_form.html',
         match=match,
         teams=teams,
         players_by_team=players_by_team,

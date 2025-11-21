@@ -9,7 +9,7 @@ teams_bp = Blueprint('teams', __name__, template_folder='../templates/teams')
 @teams_bp.route('/teams')
 def list_teams():
     teams = Team.query.all()
-    return render_template('list_teams.html', teams=teams)
+    return render_template('admin/teams/list_teams.html', teams=teams)
 
 @teams_bp.route('/create_team', methods=['GET', 'POST'])
 def create_team():
@@ -29,7 +29,7 @@ def create_team():
         db.session.commit()
         return redirect(url_for('teams.list_teams'))
 
-    return render_template('team_form.html', team=None)
+    return render_template('admin/teams/team_form.html', team=None)
 
 @teams_bp.route('/edit_team/<int:team_id>', methods=['GET', 'POST'])
 def edit_team(team_id):
@@ -46,7 +46,7 @@ def edit_team(team_id):
             team.image = filename
 
         db.session.commit()
-        return redirect(url_for('teams.list_teams'))
+        return redirect(url_for('admin/teams.list_teams'))
 
     return render_template('team_form.html', team=team)
 

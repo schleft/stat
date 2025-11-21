@@ -2,14 +2,20 @@
  * Initialise et peuple le sélecteur du batteur, gérant l'avancement.
  */
 function populateBatterSelect(plays) {
-    // La valeur actuelle est le prochain batteur calculé par loadMatchHistory/internalAdvanceGame
-    let currentRosterOrder = parseInt(batterSelect.value, 10);
-    if (isNaN(currentRosterOrder) || currentRosterOrder === 0) {
-        //currentRosterOrder = 1;
-        currentRosterOrder = parseInt(plays[plays.length - 1]["batter"]["rosterOrder"]); 
+    console.log("ok");
+    let currentRosterOrder = 0;
+
+    batterSelect.innerHTML = "";
+
+    if (plays.length > 0) {
+        // La valeur actuelle est le prochain batteur calculé par loadMatchHistory/internalAdvanceGame
+        currentRosterOrder = parseInt(batterSelect.value, 10);
+        if (isNaN(currentRosterOrder) || currentRosterOrder === 0) {
+            //currentRosterOrder = 1;
+            currentRosterOrder = parseInt(plays[plays.length - 1]["batter"]["rosterOrder"]); 
+        }
     }
-    
-    //batterSelect.innerHTML = '';
+
     const activeRoster = currentBattingTeamRoster.filter(entry => entry.roster_order !== 0 && entry.roster_order !== null);
     
     activeRoster.forEach((entry) => {

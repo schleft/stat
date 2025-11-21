@@ -13,7 +13,7 @@ function loadMatchHistory(plays) {
     currentInning = 1;
     isTopInning = true; 
 
-     // Permet de distinguer les changements de manche
+    // Permet de distinguer les changements de manche
     currentInningSAV = 0;
     isTopInningSAV = true;
 
@@ -26,7 +26,36 @@ function loadMatchHistory(plays) {
 
     // 2. Boucle CHRONOLOGIQUE pour reconstruire l'état
     plays.forEach(play => {
+        const tempLogEntry = document.createElement('div');
+        tempLogEntry.classList.add('log-entry');
         
+        let tempBatterName = (play.batter && play.batter.name) ? play.batter.name : 'N/A';
+        if (['N/A'].includes(tempBatterName) && ['SB', 'CS', 'WP', 'PB'].includes(play.action)) {
+             tempBatterName = 'Coureur(s)';
+        }
+        const tempInning = play.inning || 'N/A';
+        const tempIsTop = play.isTop;
+        const tempTopBottom = tempIsTop === true ? 'Top' : (tempIsTop === false ? 'Bottom' : 'N/A');
+        const tempAction = play.action || 'Action N/A';
+
+        // --- Ecriture du play
+
+        //On vérifie un éventuel changement de demi manche :
+        if (currentInningSAV != currentInning || isTopInningSAV != isTopInning) {
+            const inningLogEntry = document.createElement('div');
+            inningLogEntry.classList.add('log-entry');
+            inningLogEntry.classList.add('bold');
+            inningLogEntry.innerHTML = `Inning ${tempInning} - ${tempTopBottom}`;
+
+            inningLogEntry.dataset.inning = currentInning;        // équivaut à data-inning="1"
+            inningLogEntry.dataset.topBottom = `${tempTopBottom}`;  // ou "bottom"
+            playByPlayLog.append(inningLogEntry); 
+            currentInningSAV = currentInning;
+            isTopInningSAV = isTopInning;
+        }
+
+        tempSummary = displayLog(`${tempBatterName}`, `${tempAction}`, `${play.defensiveCode}`, `${play.runsScored}`, `${play.outsGenerated}`);
+
         // --- Étape A: Mise à jour du baseState (reconstruction de l'état FINAL du play)
         let newBaseState = { '1B': null, '2B': null, '3B': null };
         play.movements.forEach(movement => {
@@ -56,36 +85,8 @@ function loadMatchHistory(plays) {
         // --- Étape D: Avancer l'état du jeu (outs, inning, batteur pour le play SUIVANT)
         internalAdvanceGame(play.outsGenerated, true); 
 
-        const tempLogEntry = document.createElement('div');
-        tempLogEntry.classList.add('log-entry');
-        
-        let tempBatterName = (play.batter && play.batter.name) ? play.batter.name : 'N/A';
-        if (['N/A'].includes(tempBatterName) && ['SB', 'CS', 'WP', 'PB'].includes(play.action)) {
-             tempBatterName = 'Coureur(s)';
-        }
-
-        const tempInning = play.inning || 'N/A';
-        const tempIsTop = play.isTop;
-        const tempTopBottom = tempIsTop === true ? 'Top' : (tempIsTop === false ? 'Bottom' : 'N/A');
-        const tempAction = play.action || 'Action N/A';
-
-
-        // --- Ecriture du play
-
-        //On vérifie un éventuel changement de demi manche :
-        if (currentInningSAV != currentInning ||isTopInningSAV != isTopInning) {
-            const inningLogEntry = document.createElement('div');
-            inningLogEntry.classList.add('log-entry');
-            inningLogEntry.classList.add('bold');
-            inningLogEntry.innerHTML = `Inning ${tempInning} - ${tempTopBottom}`;
-            playByPlayLog.append(inningLogEntry); 
-
-            currentInningSAV = currentInning;
-            isTopInningSAV = isTopInning;
-        }
-        
-        tempSummary = displayLog(`${tempBatterName}`, `${tempAction}`, `${play.defensiveCode}`, `${play.runsScored}`, `${play.outsGenerated}`);
-
+        tempLogEntry.dataset.inning = currentInning;        // équivaut à data-inning="1"
+        tempLogEntry.dataset.topBottom = `${tempTopBottom}`;  // ou "bottom"
         tempLogEntry.innerHTML = tempSummary;
         playByPlayLog.append(tempLogEntry); 
     });
@@ -107,12 +108,31 @@ function logAction(data) {
          batterName = 'Coureur(s)';
     }
 
+    // TODO : On doit gérér l'affichage de la séparation de chaque demi-manche
+
     const inning = data.inning || 'N/A';
     const isTop = data.isTop;
     const topBottom = isTop === true ? 'Top' : (isTop === false ? 'Bottom' : 'N/A');
     const action = data.action || 'Action N/A';
 
-    logEntry.innerHTML = displayLog(`${batterName}`, `${action}`, `${data.defensiveCode}`, `${data.runsScored}`, `${data.outsGenerated}`);;
+    // --- Ecriture du play
+
+
+    //On vérifie un éventuel changement de demi manche :
+    if (inning != document.getElementById('playByPlayLog').lastElementChild.dataset.inning 
+        || topBottom != document.getElementById('playByPlayLog').lastElementChild.dataset.topBottom) {
+        console.log("ok");
+        const inningLogEntry = document.createElement('div');
+        inningLogEntry.classList.add('log-entry');
+        inningLogEntry.classList.add('bold');
+        inningLogEntry.innerHTML = `Inning ${inning} - ${topBottom}`;
+        playByPlayLog.append(inningLogEntry); 
+    }
+
+    logEntry.dataset.inning = `${inning}`;        // équivaut à data-inning="1"
+    logEntry.dataset.topBottom = `${topBottom}`;  // ou "bottom"
+
+    logEntry.innerHTML = displayLog(`${batterName}`, `${action}`, `${data.defensiveCode}`, `${data.runsScored}`, `${data.outsGenerated}`);
 
     // Utiliser appendChild pour ajouter au bas (ordre chronologique souhaité)
     playByPlayLog.appendChild(logEntry); 

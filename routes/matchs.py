@@ -14,7 +14,7 @@ def list_matches():
     seasons = Season.query.all()
     teams = Team.query.all()
     players = Player.query.all()
-    return render_template('matches/list_matches.html', matches=matches, seasons=seasons, teams=teams, players=players)
+    return render_template('admin/matches/list_matches.html', matches=matches, seasons=seasons, teams=teams, players=players)
 
 # Créer un match
 @matches_bp.route('/matches/create', methods=['GET', 'POST'])
@@ -38,22 +38,22 @@ def create_match():
         arbitre1 = Player.query.get(arbitre1_id)
         if not arbitre1:
             flash("L'arbitre 1 sélectionné n'existe pas.", "error")
-            return render_template('matches/match_form.html', match=None, seasons=seasons, teams=teams, players=players)
+            return render_template('admin/matches/match_form.html', match=None, seasons=seasons, teams=teams, players=players)
 
         arbitre2 = Player.query.get(arbitre2_id) if arbitre2_id else None
         if arbitre2_id and not arbitre2:
             flash("L'arbitre 2 sélectionné n'existe pas.", "error")
-            return render_template('matches/match_form.html', match=None, seasons=seasons, teams=teams, players=players)
+            return render_template('admin/matches/match_form.html', match=None, seasons=seasons, teams=teams, players=players)
 
         scoreur = Player.query.get(scoreur_id) if scoreur_id else None
         if scoreur_id and not scoreur:
             flash("Le scoreur sélectionné n'existe pas.", "error")
-            return render_template('matches/match_form.html', match=None, seasons=seasons, teams=teams, players=players)
+            return render_template('admin/matches/match_form.html', match=None, seasons=seasons, teams=teams, players=players)
 
         # Vérifier que ce ne sont pas les mêmes équipes
         if home_team_id == away_team_id:
             flash("L'équipe à domicile et l'équipe visiteuse doivent être différentes.", "error")
-            return render_template('matches/match_form.html', match=None, seasons=seasons, teams=teams, players=players)
+            return render_template('admin/matches/match_form.html', match=None, seasons=seasons, teams=teams, players=players)
 
         # Conversion de la date
         date = datetime.strptime(date_str, '%Y-%m-%d').date() if date_str else None
@@ -72,7 +72,7 @@ def create_match():
         db.session.commit()
         return redirect(url_for('rosters.edit_roster', match_id=match.id))
 
-    return render_template('matches/match_form.html', match=None, seasons=seasons, teams=teams, players=players)
+    return render_template('admin/matches/match_form.html', match=None, seasons=seasons, teams=teams, players=players)
 
 
 # Modifier un match
@@ -90,7 +90,7 @@ def edit_match(match_id):
         # Vérification équipes différentes
         if home_team_id == away_team_id:
             flash("L'équipe à domicile et l'équipe visiteuse doivent être différentes.", "error")
-            return render_template('matches/match_form.html', match=match, seasons=seasons, teams=teams, players=players, getattr=getattr)
+            return render_template('admin/matches/match_form.html', match=match, seasons=seasons, teams=teams, players=players, getattr=getattr)
 
         match.season_id = int(request.form.get('season_id'))
         match.home_team_id = int(home_team_id)
@@ -107,17 +107,17 @@ def edit_match(match_id):
         arbitre1 = Player.query.get(arbitre1_id)
         if not arbitre1:
             flash("L'arbitre 1 sélectionné n'existe pas.", "error")
-            return render_template('matches/match_form.html', match=match, seasons=seasons, teams=teams, players=players, getattr=getattr)
+            return render_template('admin/matches/match_form.html', match=match, seasons=seasons, teams=teams, players=players, getattr=getattr)
 
         arbitre2 = Player.query.get(arbitre2_id) if arbitre2_id else None
         if arbitre2_id and not arbitre2:
             flash("L'arbitre 2 sélectionné n'existe pas.", "error")
-            return render_template('matches/match_form.html', match=match, seasons=seasons, teams=teams, players=players, getattr=getattr)
+            return render_template('admin/matches/match_form.html', match=match, seasons=seasons, teams=teams, players=players, getattr=getattr)
 
         scoreur = Player.query.get(scoreur_id) if scoreur_id else None
         if scoreur_id and not scoreur:
             flash("Le scoreur sélectionné n'existe pas.", "error")
-            return render_template('matches/match_form.html', match=match, seasons=seasons, teams=teams, players=players, getattr=getattr)
+            return render_template('admin/matches/match_form.html', match=match, seasons=seasons, teams=teams, players=players, getattr=getattr)
 
         match.arbitre1_id = arbitre1.id
         match.arbitre2_id = arbitre2.id if arbitre2 else None
@@ -126,7 +126,7 @@ def edit_match(match_id):
         db.session.commit()
         return redirect(url_for('rosters.edit_roster', match_id=match_id))
 
-    return render_template('matches/match_form.html', match=match, seasons=seasons, teams=teams, players=players, getattr=getattr)
+    return render_template('admin/matches/match_form.html', match=match, seasons=seasons, teams=teams, players=players, getattr=getattr)
 
 
 # Supprimer un match

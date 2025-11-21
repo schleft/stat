@@ -8,7 +8,7 @@ seasons_bp = Blueprint('seasons', __name__, template_folder='../templates/season
 @seasons_bp.route('/seasons')
 def list_seasons():
     seasons = Season.query.all()
-    return render_template('seasons/list_seasons.html', seasons=seasons)
+    return render_template('admin/seasons/list_seasons.html', seasons=seasons)
 
 @seasons_bp.route('/create_season', methods=['GET', 'POST'])
 def create_season():
@@ -32,7 +32,7 @@ def create_season():
         db.session.commit()
         return redirect(url_for('seasons.list_seasons'))
 
-    return render_template('seasons/season_form.html', teams=teams, season=None)
+    return render_template('admin/seasons/season_form.html', teams=teams, season=None)
 
 @seasons_bp.route('/edit_season/<int:season_id>', methods=['GET', 'POST'])
 def edit_season(season_id):
@@ -57,7 +57,7 @@ def edit_season(season_id):
         db.session.commit()
         return redirect(url_for('seasons.list_seasons'))
 
-    return render_template('seasons/season_form.html', season=season, teams=teams)
+    return render_template('admin/seasons/season_form.html', season=season, teams=teams)
 
 @seasons_bp.route('/delete_season/<int:season_id>', methods=['POST'])
 def delete_season(season_id):

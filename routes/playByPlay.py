@@ -7,10 +7,8 @@ from models.roster import Roster
 from models.play import Play
 import json # Assurez-vous d'importer json si ce n'est pas déjà fait
 
-scoreCards_bp = Blueprint('scoreCards', __name__, template_folder='../templates/scoreCards')
+playByPlays_bp = Blueprint('scoreCards', __name__, template_folder='../templates/admin/playByPlay')
 
-# --- NOUVELLE FONCTION DE SÉRIALISATION (Simule Roster.to_dict()) ---
-# ... (Fonction serialize_roster_entry inchangée) ...
 def serialize_roster_entry(roster_entry):
     """Convertit un objet Roster et ses relations Player/Team en dictionnaire."""
     
@@ -39,8 +37,7 @@ def serialize_roster_entry(roster_entry):
     }
 # --------------------------------------------------------------------------
 
-# --- NOUVEAUX HELPERS POUR LA GESTION DES PLAYS ---
-
+# --- GESTION DES PLAYS ---
 def get_player_name_from_roster(roster_list, roster_order):
     """Recherche le nom du joueur dans la liste sérialisée des rosters."""
     if roster_order is None or roster_order == 0:
@@ -91,7 +88,7 @@ def serialize_play(play, away_roster_serialized, home_roster_serialized):
 # --------------------------------------------------------------------------
 
 
-@scoreCards_bp.route('/match/<int:match_id>/scoreCards', methods=['GET', 'POST'])
+@playByPlays_bp.route('/match/<int:match_id>/scoreCards', methods=['GET', 'POST'])
 def edit_scoreCard(match_id):
     # 1. Récupérer l'objet Match
     match = Match.query.options(
@@ -209,7 +206,7 @@ def edit_scoreCard(match_id):
 
     # 5. Rendre le template avec les listes de dictionnaires sérialisées et l'historique
     return render_template(
-        'scoreCards/scoreCard_form.html',
+        'admin/playByPlay/playByPlay_form.html',
         match=match,
         home_team=match.home_team,
         away_team=match.away_team,

@@ -1,0 +1,24 @@
+.inning-score-table {
+    border-collapse: collapse;
+    width: 100%;
+    text-align: center;
+    background: #ffffff;
+    border: 1px solid #ccc;
+}
+
+.inning-score-table th,
+.inning-score-table td {
+    border: 1px solid #ccc;
+    padding: 6px 8px;
+}
+
+.inning-score-table th {
+    background: #f7f7f7;
+    font-weight: bold;
+}
+
+.team-name {
+    font-weight: bold;
+    text-align: left;
+    padding-left: 8px;
+}

@@ -1,0 +1,103 @@
+<!--
+    Liste des fonctions
+        - hasRunnersOnBase : Vérifie si il y as un coureur sur base
+-->
+
+{% extends "layout/menu.html" %}
+
+{% block title %}Saisie Play-by-Play FFBS{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/plays.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/plays/menuRadial.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/plays/playByPlay.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="scorecard-container">
+    <h2>⚾ Saisie DU MATCH  - {{ away_team.name }} vs {{ home_team.name }}</h2>
+
+    <div class="main-content-layout">
+        
+        <div class="left-column">
+            <!-- Panneau de contrôle du match -->
+            {% block gameInfoDisplay %}
+                {% include "layout/gameInfoDisplay.html" %}
+            {% endblock %}
+
+            <!-- Bas : Inscrire l'action suivante -->
+            {% block newPlay %}
+                {% include "admin/playByPlay/newPlay.html" %}
+            {% endblock %}
+            
+        </div>
+        <!-- Colonne de droite : Play By Play -->
+        {% block playByPlayLog %}
+            {% include "layout/playByPlayLog.html" %}
+        {% endblock %}
+    </div>
+</div>
+
+
+
+<!-- Ce que l'on doit laisser dans le script -->
+<script>
+    // Variables de match (transférées depuis Jinja)
+    const HOME_TEAM_ID = {{ home_team.id }};
+    const AWAY_TEAM_ID = {{ away_team.id }};
+    const MATCH_ID = {{ match.id }};
+    const homeRoster = {{ home_roster | tojson }};
+    const awayRoster = {{ away_roster | tojson }};
+    // Re-ajout de la variable pour charger l'historique
+    const matchPlays = {{ match_plays | tojson }};
+
+    const batterSelect = document.getElementById('batterSelect');
+    batterSelect.value = 3;
+</script>    
+
+<!-- On charge les JS après définition des constantes -->
+<script src="{{ url_for('static', filename='js/scoreCard.js') }}"></script>
+<script src="{{ url_for('static', filename='js/globalPlay.js') }}"></script>
+
+<script>
+    // État du jeu
+    let currentInning = 1;
+    let isTopInning = true; 
+    let currentOuts = 0;
+    let currentBattingTeamRoster = awayRoster; 
+    let baseState = { // { Base: RosterOrder du joueur, ou null }
+        '1B': null,
+        '2B': null,
+        '3B': null
+    };
+    // Données de l'action en cours de saisie
+    let pendingActionData = {};
+
+    // ------------------------------------------------------------------
+    // ÉLÉMENTS DU DOM & UTILITAIRES
+    // ------------------------------------------------------------------
+    const closeMenuBtn = document.getElementById('closeMenuBtn');
+    const actionDetailModal = document.getElementById('actionDetailModal');
+    const selectActionBtn = document.getElementById('selectActionBtn');
+    const currentInningDisplay = document.getElementById('currentInningDisplay');
+    const outsDisplay = document.getElementById('outsDisplay');
+    const nextInningBtn = document.getElementById('nextInningBtn');
+    const rosterMap = {}; 
+
+    // --- LOGIQUE D'AVANCEMENT ET DE CHARGEMENT DE L'HISTORIQUE (RE-AJOUTÉ) ---
+
+
+    /**
+     * Avance le jeu après une action ou un changement de demi-manche.
+     */
+    function advanceGame(newOuts = 0, runsScored = 0) {
+        internalAdvanceGame(newOuts, false);
+        updateGameDisplay(runsScored); 
+    }
+    
+    
+</script>
+
+{% endblock %}
