@@ -15,6 +15,7 @@ function updateGameDisplay(runScored = 0) {
     const teamType = isTopInning ? 'Visiteur' : 'Domicile';
     
     currentBattingTeamRoster = battingRoster;
+
     currentInningDisplay.textContent = inningText;
     currentBattingTeam.innerHTML = `${battingTeamName}`; 
     currentDefendingTeam.textContent = defendingTeamName; 
@@ -48,25 +49,55 @@ function updateGameDisplay(runScored = 0) {
         updateScore(`${currentInning}`, `${isTopInning}`, runScored);
     }
 
-    if(`${isTopInning}` === false) {
+    if(isTopInning === true) {
         currentBattingTeamRoster = awayRoster; 
     } else {
-        currentBattingTeamRoster = homeRoster;         
+        currentBattingTeamRoster = homeRoster;   
     }
+
     populateBatterSelect(matchPlays);
     updateFieldDiagram(); 
 }
 
 function updateScore(inning, topInning, runScored) {
-    //Mise à jour du tableau de score    
-    if (topInning == false) {
-        scoreInning = document.getElementById('homeTeamScore').querySelector('td[data-inning="'+inning+'"]'); 
-        scoreTotal = document.getElementById('homeTotal');
-    } else {
-        scoreInning = document.getElementById('awayTeamScore').querySelector('td[data-inning="'+inning+'"]'); 
-        scoreTotal = document.getElementById('awayTotal');
+    // Récupérer le tr et le td total
+    let scoreInning = topInning ? document.getElementById('awayTeamScore') : document.getElementById('homeTeamScore');
+    let scoreTotal = topInning ? document.getElementById('awayTotal')  : document.getElementById('homeTotal');
+
+    const table = document.querySelector(".inning-score-table");
+    const theadRow = table.querySelector("thead tr");
+    const tbodyRows = table.querySelectorAll("tbody tr");
+
+    // ----- 1️⃣ Ajouter la colonne dans le header -----
+    let thInning = theadRow.querySelector('th[data-inning="'+inning+'"]');
+    if (!thInning) {
+        thInning = document.createElement("th");
+        thInning.setAttribute("data-inning", inning);
+        thInning.textContent = inning;
+
+        const thTotal = theadRow.querySelector("th:last-child");
+        theadRow.insertBefore(thInning, thTotal);
+    }
+    
+    // Vérifier si la colonne pour cet inning existe déjà
+    let tdInning = scoreInning.querySelector('td[data-inning="'+inning+'"]');
+    if (!tdInning) {
+        // Créer le td pour l'inning
+        tdInning = document.createElement("td");
+        tdInning.className = "inning";
+        tdInning.setAttribute("data-inning", inning);
+        tdInning.setAttribute("data-team", topInning ? "away" : "home");
+        tdInning.textContent = "0";
+
+        // Insérer avant le td total
+        scoreInning.insertBefore(tdInning, scoreTotal);
+
+        //On rajoute aussi la colonne dans le
     }
 
-    scoreInning.textContent = (parseInt(scoreInning.textContent) || 0) + runScored;
+    // Ajouter les runs à la colonne de l'inning
+    tdInning.textContent = (parseInt(tdInning.textContent) || 0) + runScored;
+
+    // Mettre à jour le total
     scoreTotal.textContent = (parseInt(scoreTotal.textContent) || 0) + runScored;
 }

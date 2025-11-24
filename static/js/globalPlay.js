@@ -113,7 +113,7 @@ function getBatterDefaultEndBase(actionCode) {
         currentOuts += newOuts;
         const currentRosterOrder = parseInt(batterSelect.value, 10);
         let nextRosterOrder = currentRosterOrder + 1;
-        
+
         const activeRoster = currentBattingTeamRoster.filter(entry => entry.roster_order !== 0 && entry.roster_order !== null);
         const maxOrder = activeRoster.reduce((max, entry) => Math.max(max, entry.roster_order), 0);
         
@@ -121,9 +121,6 @@ function getBatterDefaultEndBase(actionCode) {
             if (nextRosterOrder > maxOrder) {
                 nextRosterOrder = 1;
             }
-            // FIX: Assurer que la valeur est une chaîne pour le sélecteur
-            //batterSelect.value = String(nextRosterOrder);
-            
         } else {
             // Changement de demi-manche
             currentOuts = 0;
@@ -135,10 +132,7 @@ function getBatterDefaultEndBase(actionCode) {
                 currentInning++; 
             }
             isTopInning = !isTopInning; 
-            
-            // FIX: Assurer que la valeur est une chaîne
-            batterSelect.value = '1'; 
         }
-        
+
         currentBattingTeamRoster = isTopInning ? awayRoster : homeRoster;
     }

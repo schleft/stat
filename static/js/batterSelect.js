@@ -2,19 +2,9 @@
  * Initialise et peuple le sélecteur du batteur, gérant l'avancement.
  */
 function populateBatterSelect(plays) {
-    console.log("ok");
     let currentRosterOrder = 0;
 
     batterSelect.innerHTML = "";
-
-    if (plays.length > 0) {
-        // La valeur actuelle est le prochain batteur calculé par loadMatchHistory/internalAdvanceGame
-        currentRosterOrder = parseInt(batterSelect.value, 10);
-        if (isNaN(currentRosterOrder) || currentRosterOrder === 0) {
-            //currentRosterOrder = 1;
-            currentRosterOrder = parseInt(plays[plays.length - 1]["batter"]["rosterOrder"]); 
-        }
-    }
 
     const activeRoster = currentBattingTeamRoster.filter(entry => entry.roster_order !== 0 && entry.roster_order !== null);
     
@@ -35,14 +25,19 @@ function populateBatterSelect(plays) {
         batterSelect.appendChild(option);
     });
     
-    // Rétablit la valeur correcte (doit être une chaîne)
-
-    /*if (activeRoster.some(entry => entry.roster_order === currentRosterOrder)) {
-        console.log(currentRosterOrder);
-        batterSelect.value = String(currentRosterOrder);
-    } else if (activeRoster.length > 0) {
-        console.log(currentRosterOrder);
-        batterSelect.value = String(activeRoster[0].roster_order);
-    }*/
-    batterSelect.value = String(currentRosterOrder+1);
+    // Si le dernier play n'est pas dans la même manche,
+    // on récupère le dernier batteur a avoir joué dans l'autre équipe
+    currentRosterOrder = 0; // Dans le cas ou aucun batteur n'est passé (1ère manche)
+    for (let i = plays.length - 1; i >= 0; i--) {
+        if (plays[i].isTop == isTopInning) {
+            currentRosterOrder = parseInt(plays[i].batter.rosterOrder);
+            break;
+        }   
+    }
+    
+    if(currentRosterOrder == 9) {
+        batterSelect.value = 1+"";
+    } else {
+        batterSelect.value = String(currentRosterOrder+1);
+    }
 }

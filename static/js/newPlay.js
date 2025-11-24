@@ -252,7 +252,6 @@ async function submitActionDetail() {
     pendingActionData.inning = currentInning;
     
     try {
-        // **NOTE IMPORTANTE :** L'appel API est laissé commenté si non fonctionnel
         const response = await fetch(`/match/${MATCH_ID}/scoreCards`, { 
             method: 'POST',
             headers: {

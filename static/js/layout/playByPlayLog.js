@@ -21,6 +21,7 @@ function loadMatchHistory(plays) {
     baseState = { '1B': null, '2B': null, '3B': null };
 
     batterSelect.value = '1'; 
+    
     currentBattingTeamRoster = awayRoster; 
     playByPlayLog.innerHTML = ''; 
 
@@ -77,9 +78,8 @@ function loadMatchHistory(plays) {
         currentOuts = play.initialOuts; // Rétablir les outs AVANT le play
 
         // --- Étape C: Positionner le batteur (Pour le play en cours de log)
-        if (play.batter.rosterOrder) {
-            batterSelect.value = String(play.batter.rosterOrder);
-        } 
+
+
         currentBattingTeamRoster = play.isTop ? awayRoster : homeRoster;
         
         // --- Étape D: Avancer l'état du jeu (outs, inning, batteur pour le play SUIVANT)
@@ -121,7 +121,6 @@ function logAction(data) {
     //On vérifie un éventuel changement de demi manche :
     if (inning != document.getElementById('playByPlayLog').lastElementChild.dataset.inning 
         || topBottom != document.getElementById('playByPlayLog').lastElementChild.dataset.topBottom) {
-        console.log("ok");
         const inningLogEntry = document.createElement('div');
         inningLogEntry.classList.add('log-entry');
         inningLogEntry.classList.add('bold');
@@ -136,6 +135,9 @@ function logAction(data) {
 
     // Utiliser appendChild pour ajouter au bas (ordre chronologique souhaité)
     playByPlayLog.appendChild(logEntry); 
+
+    // On ajoute le play, sinon on calcul mal le prochaine batter, et d'autres choses
+    matchPlays[matchPlays.length] = data;
 }
 
 function displayLog(batterName, action, defensiveCode, runScored, outsGenerated) {
